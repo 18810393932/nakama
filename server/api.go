@@ -403,15 +403,15 @@ func securityInterceptorFunc(logger *zap.Logger, config Config, sessionCache Ses
 		}
 		if len(auth) != 1 {
 			// Value of "authorization" or "grpc-authorization" was empty or repeated.
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid1")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
 		}
 		userID, username, vars, exp, token, ok := parseBearerAuth([]byte(config.GetSession().EncryptionKey), auth[0])
 		if !ok {
 			// Value of "authorization" or "grpc-authorization" was malformed or expired.
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid2")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
 		}
 		if !sessionCache.IsValidSession(userID, exp, token) {
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid3")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
 		}
 		ctx = context.WithValue(context.WithValue(context.WithValue(context.WithValue(ctx, ctxUserIDKey{}, userID), ctxUsernameKey{}, username), ctxVarsKey{}, vars), ctxExpiryKey{}, exp)
 	default:
@@ -431,15 +431,15 @@ func securityInterceptorFunc(logger *zap.Logger, config Config, sessionCache Ses
 		}
 		if len(auth) != 1 {
 			// Value of "authorization" or "grpc-authorization" was empty or repeated.
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid4")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
 		}
 		userID, username, vars, exp, token, ok := parseBearerAuth([]byte(config.GetSession().EncryptionKey), auth[0])
 		if !ok {
 			// Value of "authorization" or "grpc-authorization" was malformed or expired.
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid5")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
 		}
 		if !sessionCache.IsValidSession(userID, exp, token) {
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid6")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
 		}
 		ctx = context.WithValue(context.WithValue(context.WithValue(context.WithValue(ctx, ctxUserIDKey{}, userID), ctxUsernameKey{}, username), ctxVarsKey{}, vars), ctxExpiryKey{}, exp)
 	}
@@ -472,9 +472,6 @@ func parseBearerAuth(hmacSecretByte []byte, auth string) (userID uuid.UUID, user
 	}
 	const prefix = "Bearer "
 	if !strings.HasPrefix(auth, prefix) {
-
-		fmt.Println("--------------------===========----------------------")
-
 		return
 	}
 	return parseToken(hmacSecretByte, auth[len(prefix):])
@@ -488,17 +485,14 @@ func parseToken(hmacSecretByte []byte, tokenString string) (userID uuid.UUID, us
 		return hmacSecretByte, nil
 	})
 	if err != nil {
-		fmt.Println("------------111111111111111111111")
 		return
 	}
 	claims, ok := jwtToken.Claims.(*SessionTokenClaims)
 	if !ok || !jwtToken.Valid {
-		fmt.Println("---------------22222222222222222222222")
 		return
 	}
 	userID, err = uuid.FromString(claims.UserId)
 	if err != nil {
-		fmt.Println("===============3333333333333333333333")
 		return
 	}
 	return userID, claims.Username, claims.Vars, claims.ExpiresAt, tokenString, true
