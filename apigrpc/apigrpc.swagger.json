@@ -618,7 +618,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/nakamaapiAccountSteam"
+              "$ref": "#/definitions/apiAccountSteam"
             }
           },
           {
@@ -950,7 +950,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/modulesAccountSteam"
+              "$ref": "#/definitions/modulesAccountOculus"
             }
           },
           {
@@ -1358,7 +1358,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/nakamaapiAccountSteam"
+              "$ref": "#/definitions/apiAccountSteam"
             }
           }
         ],
@@ -1746,7 +1746,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/nakamaapiAccountSteam"
+              "$ref": "#/definitions/apiAccountSteam"
             }
           },
           {
@@ -3782,6 +3782,23 @@
       },
       "description": "Send a Google token to the server. Used with authenticate/link/unlink."
     },
+    "apiAccountSteam": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "The account token received from Steam to access their profile API."
+        },
+        "vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Extra information that will be bundled in the session token."
+        }
+      },
+      "description": "Send a Steam token to the server. Used with authenticate/link/unlink."
+    },
     "apiChannelMessage": {
       "type": "object",
       "properties": {
@@ -4179,7 +4196,7 @@
       "type": "object",
       "properties": {
         "account": {
-          "$ref": "#/definitions/nakamaapiAccountSteam",
+          "$ref": "#/definitions/apiAccountSteam",
           "description": "The Facebook account details."
         },
         "sync": {
@@ -4929,9 +4946,9 @@
     "modulesAccountOculus": {
       "type": "object",
       "properties": {
-        "token": {
+        "id": {
           "type": "string",
-          "description": "The account token received from Oculus to access their profile API."
+          "description": "A custom identifier."
         },
         "vars": {
           "type": "object",
@@ -4942,40 +4959,6 @@
         }
       },
       "description": "Send a Oculus token to the server. Used with authenticate/link/unlink."
-    },
-    "modulesAccountSteam": {
-      "type": "object",
-      "properties": {
-        "token": {
-          "type": "string",
-          "description": "The account token received from Steam to access their profile API."
-        },
-        "vars": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Extra information that will be bundled in the session token."
-        }
-      },
-      "description": "Send a Steam token to the server. Used with authenticate/link/unlink."
-    },
-    "nakamaapiAccountSteam": {
-      "type": "object",
-      "properties": {
-        "token": {
-          "type": "string",
-          "description": "The account token received from Steam to access their profile API."
-        },
-        "vars": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Extra information that will be bundled in the session token."
-        }
-      },
-      "description": "Send a Steam token to the server. Used with authenticate/link/unlink."
     },
     "protobufAny": {
       "type": "object",
