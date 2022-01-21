@@ -1,0 +1,79 @@
+// Copyright 2019 The Nakama Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * The Nakama server RPC protocol for games and apps.
+ */
+syntax = "proto3";
+
+package nakama.api;
+
+import "google/protobuf/wrappers.proto";
+
+
+option go_package = "self/api";
+
+option java_multiple_files = true;
+option java_outer_classname = "NakamaApi";
+option java_package = "com.heroiclabs.nakama.api";
+
+option csharp_namespace = "Nakama.Protobuf";
+
+
+// Import Facebook friends and add them to a user's account.
+        message rpc ImportFacebookFriends (api.ImportFacebookFriendsRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+        post: "/v2/friend/facebook",
+                body: "account"
+      };
+}
+
+
+            // Add Facebook to the social profiles on the current user's account.
+        rpc LinkFacebook (api.LinkFacebookRequest) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+        post: "/v2/account/link/facebook",
+                body: "account"
+};
+}
+
+            // Remove Steam from the social profiles on the current user's account.
+        rpc UnlinkSteam (api.AccountSteam) returns (google.protobuf.Empty) {
+        option (google.api.http) = {
+        post: "/v2/account/unlink/steam",
+                body: "*"
+};
+}
+
+
+// Authenticate against the server with Oculus.
+message AuthenticateOculusRequest {
+    // The Steam account details.
+    AccountOculus account = 1;
+    // Register the account if the user does not already exist.
+    google.protobuf.BoolValue create = 2;
+    // Set the username on the account at register. Must be unique.
+    string username = 3;
+    // Import Oculus friends for the user.
+    google.protobuf.BoolValue sync = 4;
+}
+
+// Send a Oculus token to the server. Used with authenticate/link/unlink.
+message AccountOculus {
+    // The account token received from Oculus to access their profile API.
+    string token = 1;
+    // Extra information that will be bundled in the session token.
+    map<string, string> vars = 2;
+}
+
