@@ -343,6 +343,36 @@ func securityInterceptorFunc(logger *zap.Logger, config Config, sessionCache Ses
 			// Value of "authorization" or "grpc-authorization" username component did not match server key.
 			return nil, status.Error(codes.Unauthenticated, "Server key invalid")
 		}
+
+	case "/nakama.api.Nakama/AuthenticateOculus":
+		// Session refresh and authentication functions only require server key.
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			logger.Error("Cannot extract metadata from incoming context")
+			return nil, status.Error(codes.FailedPrecondition, "Cannot extract metadata from incoming context")
+		}
+		auth, ok := md["authorization"]
+		if !ok {
+			auth, ok = md["grpcgateway-authorization"]
+		}
+		if !ok {
+			// Neither "authorization" nor "grpc-authorization" were supplied.
+			return nil, status.Error(codes.Unauthenticated, "Server key required")
+		}
+		if len(auth) != 1 {
+			// Value of "authorization" or "grpc-authorization" was empty or repeated.
+			return nil, status.Error(codes.Unauthenticated, "Server key required")
+		}
+		username, _, ok := parseBasicAuth(auth[0])
+		if !ok {
+			// Value of "authorization" or "grpc-authorization" was malformed.
+			return nil, status.Error(codes.Unauthenticated, "Server key invalid")
+		}
+		if username != config.GetSocket().ServerKey {
+			// Value of "authorization" or "grpc-authorization" username component did not match server key.
+			return nil, status.Error(codes.Unauthenticated, "Server key invalid")
+		}
+
 	case "/nakama.api.Nakama/RpcFunc":
 		// RPC allows full user authentication or HTTP key authentication.
 		md, ok := metadata.FromIncomingContext(ctx)
@@ -373,15 +403,15 @@ func securityInterceptorFunc(logger *zap.Logger, config Config, sessionCache Ses
 		}
 		if len(auth) != 1 {
 			// Value of "authorization" or "grpc-authorization" was empty or repeated.
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid1")
 		}
 		userID, username, vars, exp, token, ok := parseBearerAuth([]byte(config.GetSession().EncryptionKey), auth[0])
 		if !ok {
 			// Value of "authorization" or "grpc-authorization" was malformed or expired.
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid2")
 		}
 		if !sessionCache.IsValidSession(userID, exp, token) {
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid3")
 		}
 		ctx = context.WithValue(context.WithValue(context.WithValue(context.WithValue(ctx, ctxUserIDKey{}, userID), ctxUsernameKey{}, username), ctxVarsKey{}, vars), ctxExpiryKey{}, exp)
 	default:
@@ -401,15 +431,15 @@ func securityInterceptorFunc(logger *zap.Logger, config Config, sessionCache Ses
 		}
 		if len(auth) != 1 {
 			// Value of "authorization" or "grpc-authorization" was empty or repeated.
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid4")
 		}
 		userID, username, vars, exp, token, ok := parseBearerAuth([]byte(config.GetSession().EncryptionKey), auth[0])
 		if !ok {
 			// Value of "authorization" or "grpc-authorization" was malformed or expired.
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid5")
 		}
 		if !sessionCache.IsValidSession(userID, exp, token) {
-			return nil, status.Error(codes.Unauthenticated, "Auth token invalid")
+			return nil, status.Error(codes.Unauthenticated, "Auth token invalid6")
 		}
 		ctx = context.WithValue(context.WithValue(context.WithValue(context.WithValue(ctx, ctxUserIDKey{}, userID), ctxUsernameKey{}, username), ctxVarsKey{}, vars), ctxExpiryKey{}, exp)
 	}
@@ -442,6 +472,9 @@ func parseBearerAuth(hmacSecretByte []byte, auth string) (userID uuid.UUID, user
 	}
 	const prefix = "Bearer "
 	if !strings.HasPrefix(auth, prefix) {
+
+		fmt.Println("--------------------===========----------------------")
+
 		return
 	}
 	return parseToken(hmacSecretByte, auth[len(prefix):])
@@ -455,14 +488,17 @@ func parseToken(hmacSecretByte []byte, tokenString string) (userID uuid.UUID, us
 		return hmacSecretByte, nil
 	})
 	if err != nil {
+		fmt.Println("------------111111111111111111111")
 		return
 	}
 	claims, ok := jwtToken.Claims.(*SessionTokenClaims)
 	if !ok || !jwtToken.Valid {
+		fmt.Println("---------------22222222222222222222222")
 		return
 	}
 	userID, err = uuid.FromString(claims.UserId)
 	if err != nil {
+		fmt.Println("===============3333333333333333333333")
 		return
 	}
 	return userID, claims.Username, claims.Vars, claims.ExpiresAt, tokenString, true

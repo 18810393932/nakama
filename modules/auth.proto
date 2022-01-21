@@ -45,9 +45,36 @@ message AuthenticateOculusRequest {
 
 // Send a Oculus token to the server. Used with authenticate/link/unlink.
 message AccountOculus {
-    // The account token received from Oculus to access their profile API.
+    // A custom identifier.
+    string id = 1;
+    // Extra information that will be bundled in the session token.
+    map<string, string> vars = 2;
+}
+
+// Send a Steam token to the server. Used with authenticate/link/unlink.
+message AccountSteam {
+    // The account token received from Steam to access their profile API.
     string token = 1;
     // Extra information that will be bundled in the session token.
     map<string, string> vars = 2;
 }
+
+// Import Facebook friends into the current user's account.
+message ImportOculusFriendsRequest {
+    // The Facebook account details.
+    AccountOculus account = 1;
+    // Reset the current user's friends list.
+    google.protobuf.BoolValue reset = 2;
+}
+
+
+// Link Steam to the current user's account.
+message LinkOculusRequest {
+    // The Facebook account details.
+    AccountSteam account = 1;
+    // Import Steam friends for the user.
+    google.protobuf.BoolValue sync = 2;
+}
+
+
 

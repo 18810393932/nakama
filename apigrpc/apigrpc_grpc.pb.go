@@ -5,6 +5,7 @@ package apigrpc
 import (
 	context "context"
 	api "github.com/heroiclabs/nakama-common/api"
+	modules "github.com/heroiclabs/nakama/v3/modules"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -44,6 +45,14 @@ type NakamaClient interface {
 	AuthenticateGameCenter(ctx context.Context, in *api.AuthenticateGameCenterRequest, opts ...grpc.CallOption) (*api.Session, error)
 	// Authenticate a user with Google against the server.
 	AuthenticateGoogle(ctx context.Context, in *api.AuthenticateGoogleRequest, opts ...grpc.CallOption) (*api.Session, error)
+	// Authenticate a user with Oculus against the server.
+	AuthenticateOculus(ctx context.Context, in *modules.AuthenticateOculusRequest, opts ...grpc.CallOption) (*api.Session, error)
+	// Import Facebook friends and add them to a user's account.
+	ImportOculusFriends(ctx context.Context, in *modules.ImportOculusFriendsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Add Oculus to the social profiles on the current user's account.
+	LinkOculus(ctx context.Context, in *modules.LinkOculusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Remove Oculus from the social profiles on the current user's account.
+	UnlinkOculus(ctx context.Context, in *modules.AccountOculus, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// Authenticate a user with Steam against the server.
 	AuthenticateSteam(ctx context.Context, in *api.AuthenticateSteamRequest, opts ...grpc.CallOption) (*api.Session, error)
 	// Ban a set of users from a group.
@@ -280,6 +289,42 @@ func (c *nakamaClient) AuthenticateGameCenter(ctx context.Context, in *api.Authe
 func (c *nakamaClient) AuthenticateGoogle(ctx context.Context, in *api.AuthenticateGoogleRequest, opts ...grpc.CallOption) (*api.Session, error) {
 	out := new(api.Session)
 	err := c.cc.Invoke(ctx, "/nakama.api.Nakama/AuthenticateGoogle", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nakamaClient) AuthenticateOculus(ctx context.Context, in *modules.AuthenticateOculusRequest, opts ...grpc.CallOption) (*api.Session, error) {
+	out := new(api.Session)
+	err := c.cc.Invoke(ctx, "/nakama.api.Nakama/AuthenticateOculus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nakamaClient) ImportOculusFriends(ctx context.Context, in *modules.ImportOculusFriendsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/nakama.api.Nakama/ImportOculusFriends", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nakamaClient) LinkOculus(ctx context.Context, in *modules.LinkOculusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/nakama.api.Nakama/LinkOculus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nakamaClient) UnlinkOculus(ctx context.Context, in *modules.AccountOculus, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/nakama.api.Nakama/UnlinkOculus", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -872,6 +917,14 @@ type NakamaServer interface {
 	AuthenticateGameCenter(context.Context, *api.AuthenticateGameCenterRequest) (*api.Session, error)
 	// Authenticate a user with Google against the server.
 	AuthenticateGoogle(context.Context, *api.AuthenticateGoogleRequest) (*api.Session, error)
+	// Authenticate a user with Oculus against the server.
+	AuthenticateOculus(context.Context, *modules.AuthenticateOculusRequest) (*api.Session, error)
+	// Import Facebook friends and add them to a user's account.
+	ImportOculusFriends(context.Context, *modules.ImportOculusFriendsRequest) (*emptypb.Empty, error)
+	// Add Oculus to the social profiles on the current user's account.
+	LinkOculus(context.Context, *modules.LinkOculusRequest) (*emptypb.Empty, error)
+	// Remove Oculus from the social profiles on the current user's account.
+	UnlinkOculus(context.Context, *modules.AccountOculus) (*emptypb.Empty, error)
 	// Authenticate a user with Steam against the server.
 	AuthenticateSteam(context.Context, *api.AuthenticateSteamRequest) (*api.Session, error)
 	// Ban a set of users from a group.
@@ -1038,6 +1091,18 @@ func (UnimplementedNakamaServer) AuthenticateGameCenter(context.Context, *api.Au
 }
 func (UnimplementedNakamaServer) AuthenticateGoogle(context.Context, *api.AuthenticateGoogleRequest) (*api.Session, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthenticateGoogle not implemented")
+}
+func (UnimplementedNakamaServer) AuthenticateOculus(context.Context, *modules.AuthenticateOculusRequest) (*api.Session, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthenticateOculus not implemented")
+}
+func (UnimplementedNakamaServer) ImportOculusFriends(context.Context, *modules.ImportOculusFriendsRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ImportOculusFriends not implemented")
+}
+func (UnimplementedNakamaServer) LinkOculus(context.Context, *modules.LinkOculusRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LinkOculus not implemented")
+}
+func (UnimplementedNakamaServer) UnlinkOculus(context.Context, *modules.AccountOculus) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnlinkOculus not implemented")
 }
 func (UnimplementedNakamaServer) AuthenticateSteam(context.Context, *api.AuthenticateSteamRequest) (*api.Session, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthenticateSteam not implemented")
@@ -1450,6 +1515,78 @@ func _Nakama_AuthenticateGoogle_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NakamaServer).AuthenticateGoogle(ctx, req.(*api.AuthenticateGoogleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Nakama_AuthenticateOculus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(modules.AuthenticateOculusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NakamaServer).AuthenticateOculus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nakama.api.Nakama/AuthenticateOculus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NakamaServer).AuthenticateOculus(ctx, req.(*modules.AuthenticateOculusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Nakama_ImportOculusFriends_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(modules.ImportOculusFriendsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NakamaServer).ImportOculusFriends(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nakama.api.Nakama/ImportOculusFriends",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NakamaServer).ImportOculusFriends(ctx, req.(*modules.ImportOculusFriendsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Nakama_LinkOculus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(modules.LinkOculusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NakamaServer).LinkOculus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nakama.api.Nakama/LinkOculus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NakamaServer).LinkOculus(ctx, req.(*modules.LinkOculusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Nakama_UnlinkOculus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(modules.AccountOculus)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NakamaServer).UnlinkOculus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nakama.api.Nakama/UnlinkOculus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NakamaServer).UnlinkOculus(ctx, req.(*modules.AccountOculus))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2624,6 +2761,22 @@ var Nakama_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthenticateGoogle",
 			Handler:    _Nakama_AuthenticateGoogle_Handler,
+		},
+		{
+			MethodName: "AuthenticateOculus",
+			Handler:    _Nakama_AuthenticateOculus_Handler,
+		},
+		{
+			MethodName: "ImportOculusFriends",
+			Handler:    _Nakama_ImportOculusFriends_Handler,
+		},
+		{
+			MethodName: "LinkOculus",
+			Handler:    _Nakama_LinkOculus_Handler,
+		},
+		{
+			MethodName: "UnlinkOculus",
+			Handler:    _Nakama_UnlinkOculus_Handler,
 		},
 		{
 			MethodName: "AuthenticateSteam",

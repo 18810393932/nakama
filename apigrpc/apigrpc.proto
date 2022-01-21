@@ -23,7 +23,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "github.com/heroiclabs/nakama-common/api/api.proto";
-import "api.proto";
+import "auth.proto";
 option go_package = "github.com/heroiclabs/nakama/v3/apigrpc";
 
 option java_multiple_files = true;
@@ -265,6 +265,32 @@ service Nakama {
       }
     };
   }
+
+
+  // Import Facebook friends and add them to a user's account.
+  rpc ImportOculusFriends (modules.ImportOculusFriendsRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v2/friend/oculus",
+      body: "account"
+    };
+  }
+
+  // Add Oculus to the social profiles on the current user's account.
+  rpc LinkOculus (modules.LinkOculusRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v2/account/link/oculus",
+      body: "account"
+    };
+  }
+
+  // Remove Oculus from the social profiles on the current user's account.
+  rpc UnlinkOculus (modules.AccountOculus) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v2/account/unlink/oculus",
+      body: "*"
+    };
+  }
+
 
 
   //==========================================================================

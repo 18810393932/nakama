@@ -118,6 +118,68 @@ func AuthenticateApple(ctx context.Context, logger *zap.Logger, db *sql.DB, clie
 	return userID, username, true, nil
 }
 
+func AuthenticateOculus(ctx context.Context, logger *zap.Logger, db *sql.DB, oculusID, username string, create bool) (string, string, bool, error) {
+	found := true
+
+	// Look for an existing account.
+	query := "SELECT id, username, disable_time FROM users WHERE oculus_id = $1"
+	var dbUserID string
+	var dbUsername string
+	var dbDisableTime pgtype.Timestamptz
+	err := db.QueryRowContext(ctx, query, oculusID).Scan(&dbUserID, &dbUsername, &dbDisableTime)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			found = false
+		} else {
+			logger.Error("Error looking up user by oculusID ID.", zap.Error(err), zap.String("oculusID", oculusID), zap.String("username", username), zap.Bool("create", create))
+			return "", "", false, status.Error(codes.Internal, "Error finding user account.")
+		}
+	}
+
+	// Existing account found.
+	if found {
+		// Check if it's disabled.
+		if dbDisableTime.Status == pgtype.Present && dbDisableTime.Time.Unix() != 0 {
+			logger.Info("User account is disabled.", zap.String("oculusID", oculusID), zap.String("username", username), zap.Bool("create", create))
+			return "", "", false, status.Error(codes.PermissionDenied, "User account banned.")
+		}
+
+		return dbUserID, dbUsername, false, nil
+	}
+
+	if !create {
+		// No user account found, and creation is not allowed.
+		return "", "", false, status.Error(codes.NotFound, "User account not found.")
+	}
+
+	// Create a new account.
+	userID := uuid.Must(uuid.NewV4()).String()
+	query = "INSERT INTO users (id, username, oculus_id, create_time, update_time) VALUES ($1, $2, $3, now(), now())"
+	result, err := db.ExecContext(ctx, query, userID, username, oculusID)
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == dbErrorUniqueViolation {
+			if strings.Contains(pgErr.Message, "users_username_key") {
+				// Username is already in use by a different account.
+				return "", "", false, status.Error(codes.AlreadyExists, "Username is already in use.")
+			} else if strings.Contains(pgErr.Message, "users_oculus_id_key") {
+				// A concurrent write has inserted this oculus ID.
+				logger.Info("Did not insert new user as oculus ID already exists.", zap.Error(err), zap.String("oculusID", oculusID), zap.String("username", username), zap.Bool("create", create))
+				return "", "", false, status.Error(codes.Internal, "Error finding or creating user account.")
+			}
+		}
+		logger.Error("Cannot find or create user with oculus ID.", zap.Error(err), zap.String("oculusID", oculusID), zap.String("username", username), zap.Bool("create", create))
+		return "", "", false, status.Error(codes.Internal, "Error finding or creating user account.")
+	}
+
+	if rowsAffectedCount, _ := result.RowsAffected(); rowsAffectedCount != 1 {
+		logger.Error("Did not insert new user.", zap.Int64("rows_affected", rowsAffectedCount))
+		return "", "", false, status.Error(codes.Internal, "Error finding or creating user account.")
+	}
+
+	return userID, username, true, nil
+}
+
 func AuthenticateCustom(ctx context.Context, logger *zap.Logger, db *sql.DB, customID, username string, create bool) (string, string, bool, error) {
 	found := true
 

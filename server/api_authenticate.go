@@ -17,6 +17,8 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
+	"github.com/heroiclabs/nakama/v3/modules"
 	"math/rand"
 	"regexp"
 	"strings"
@@ -182,6 +184,79 @@ func (s *ApiServer) AuthenticateCustom(ctx context.Context, in *api.Authenticate
 		// Execute the after function lambda wrapped in a trace for stats measurement.
 		traceApiAfter(ctx, s.logger, s.metrics, ctx.Value(ctxFullMethodKey{}).(string), afterFn)
 	}
+
+	return session, nil
+}
+
+func (s *ApiServer) AuthenticateOculus(ctx context.Context, in *modules.AuthenticateOculusRequest) (*api.Session, error) {
+	// Before hook.
+
+	fmt.Println("------------------------2222222222222-------------------------")
+	fmt.Println("------------------------2222222222222-------------------------")
+	fmt.Println("------------------------2222222222222-------------------------")
+	fmt.Println("------------------------2222222222222-------------------------")
+
+	//if fn := s.runtime.BeforeAuthenticateCustom(); fn != nil {
+	//	beforeFn := func(clientIP, clientPort string) error {
+	//		result, err, code := fn(ctx, s.logger, "", "", nil, 0, clientIP, clientPort, in)
+	//		if err != nil {
+	//			return status.Error(code, err.Error())
+	//		}
+	//		if result == nil {
+	//			// If result is nil, requested resource is disabled.
+	//			s.logger.Warn("Intercepted a disabled resource.", zap.Any("resource", ctx.Value(ctxFullMethodKey{}).(string)))
+	//			return status.Error(codes.NotFound, "Requested resource was not found.")
+	//		}
+	//		in = result
+	//		return nil
+	//	}
+	//
+	//	// Execute the before function lambda wrapped in a trace for stats measurement.
+	//	err := traceApiBefore(ctx, s.logger, s.metrics, ctx.Value(ctxFullMethodKey{}).(string), beforeFn)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//}
+
+	if in.Account == nil || in.Account.Id == "" {
+		return nil, status.Error(codes.InvalidArgument, "Oculus ID is required.")
+	} else if invalidCharsRegex.MatchString(in.Account.Id) {
+		return nil, status.Error(codes.InvalidArgument, "Oculus ID invalid, no spaces or control characters allowed.")
+	} else if len(in.Account.Id) < 6 || len(in.Account.Id) > 128 {
+		return nil, status.Error(codes.InvalidArgument, "Oculus ID invalid, must be 6-128 bytes.")
+	}
+
+	username := in.Username
+	if username == "" {
+		username = generateUsername()
+	} else if invalidUsernameRegex.MatchString(username) {
+		return nil, status.Error(codes.InvalidArgument, "Username invalid, no spaces or control characters allowed.")
+	} else if len(username) > 128 {
+		return nil, status.Error(codes.InvalidArgument, "Username invalid, must be 1-128 bytes.")
+	}
+
+	create := in.Create == nil || in.Create.Value
+
+	dbUserID, dbUsername, created, err := AuthenticateOculus(ctx, s.logger, s.db, in.Account.Id, username, create)
+	if err != nil {
+		return nil, err
+	}
+
+	token, exp := generateToken(s.config, dbUserID, dbUsername, in.Account.Vars)
+	refreshToken, refreshExp := generateRefreshToken(s.config, dbUserID, dbUsername, in.Account.Vars)
+	s.sessionCache.Add(uuid.FromStringOrNil(dbUserID), exp, token, refreshExp, refreshToken)
+	session := &api.Session{Created: created, Token: token, RefreshToken: refreshToken}
+
+	// After hook.
+
+	//if fn := s.runtime.AfterAuthenticateCustom(); fn != nil {
+	//	afterFn := func(clientIP, clientPort string) error {
+	//		return fn(ctx, s.logger, dbUserID, dbUsername, in.Account.Vars, exp, clientIP, clientPort, session, in)
+	//	}
+	//
+	//	// Execute the after function lambda wrapped in a trace for stats measurement.
+	//	traceApiAfter(ctx, s.logger, s.metrics, ctx.Value(ctxFullMethodKey{}).(string), afterFn)
+	//}
 
 	return session, nil
 }

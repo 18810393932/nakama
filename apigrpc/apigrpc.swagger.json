@@ -618,7 +618,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiAccountSteam"
+              "$ref": "#/definitions/nakamaapiAccountSteam"
             }
           },
           {
@@ -918,6 +918,47 @@
             "schema": {
               "$ref": "#/definitions/apiAccountGoogle"
             }
+          }
+        ],
+        "tags": [
+          "Nakama"
+        ]
+      }
+    },
+    "/v2/account/link/oculus": {
+      "post": {
+        "summary": "Add Oculus to the social profiles on the current user's account.",
+        "operationId": "Nakama_LinkOculus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "The Facebook account details.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/modulesAccountSteam"
+            }
+          },
+          {
+            "name": "sync",
+            "description": "Import Steam friends for the user.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
           }
         ],
         "tags": [
@@ -1260,6 +1301,39 @@
         ]
       }
     },
+    "/v2/account/unlink/oculus": {
+      "post": {
+        "summary": "Remove Oculus from the social profiles on the current user's account.",
+        "operationId": "Nakama_UnlinkOculus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/modulesAccountOculus"
+            }
+          }
+        ],
+        "tags": [
+          "Nakama"
+        ]
+      }
+    },
     "/v2/account/unlink/steam": {
       "post": {
         "summary": "Remove Steam from the social profiles on the current user's account.",
@@ -1284,7 +1358,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiAccountSteam"
+              "$ref": "#/definitions/nakamaapiAccountSteam"
             }
           }
         ],
@@ -1606,6 +1680,47 @@
         ]
       }
     },
+    "/v2/friend/oculus": {
+      "post": {
+        "summary": "Import Facebook friends and add them to a user's account.",
+        "operationId": "Nakama_ImportOculusFriends",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "The Facebook account details.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/modulesAccountOculus"
+            }
+          },
+          {
+            "name": "reset",
+            "description": "Reset the current user's friends list.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Nakama"
+        ]
+      }
+    },
     "/v2/friend/steam": {
       "post": {
         "summary": "Import Steam friends and add them to a user's account.",
@@ -1631,7 +1746,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiAccountSteam"
+              "$ref": "#/definitions/nakamaapiAccountSteam"
             }
           },
           {
@@ -3667,23 +3782,6 @@
       },
       "description": "Send a Google token to the server. Used with authenticate/link/unlink."
     },
-    "apiAccountSteam": {
-      "type": "object",
-      "properties": {
-        "token": {
-          "type": "string",
-          "description": "The account token received from Steam to access their profile API."
-        },
-        "vars": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Extra information that will be bundled in the session token."
-        }
-      },
-      "description": "Send a Steam token to the server. Used with authenticate/link/unlink."
-    },
     "apiChannelMessage": {
       "type": "object",
       "properties": {
@@ -4081,7 +4179,7 @@
       "type": "object",
       "properties": {
         "account": {
-          "$ref": "#/definitions/apiAccountSteam",
+          "$ref": "#/definitions/nakamaapiAccountSteam",
           "description": "The Facebook account details."
         },
         "sync": {
@@ -4844,6 +4942,40 @@
         }
       },
       "description": "Send a Oculus token to the server. Used with authenticate/link/unlink."
+    },
+    "modulesAccountSteam": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "The account token received from Steam to access their profile API."
+        },
+        "vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Extra information that will be bundled in the session token."
+        }
+      },
+      "description": "Send a Steam token to the server. Used with authenticate/link/unlink."
+    },
+    "nakamaapiAccountSteam": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "The account token received from Steam to access their profile API."
+        },
+        "vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Extra information that will be bundled in the session token."
+        }
+      },
+      "description": "Send a Steam token to the server. Used with authenticate/link/unlink."
     },
     "protobufAny": {
       "type": "object",
