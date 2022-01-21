@@ -533,6 +533,66 @@
         ]
       }
     },
+    "/v2/account/authenticate/oculus": {
+      "post": {
+        "summary": "Authenticate a user with Oculus against the server.",
+        "operationId": "Nakama_AuthenticateOculus",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiSession"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "The Steam account details.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/modulesAccountOculus"
+            }
+          },
+          {
+            "name": "create",
+            "description": "Register the account if the user does not already exist.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "name": "username",
+            "description": "Set the username on the account at register. Must be unique.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sync",
+            "description": "Import Oculus friends for the user.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Nakama"
+        ],
+        "security": [
+          {
+            "BasicAuth": []
+          }
+        ]
+      }
+    },
     "/v2/account/authenticate/steam": {
       "post": {
         "summary": "Authenticate a user with Steam against the server.",
@@ -1438,7 +1498,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "usernames",
@@ -1448,7 +1509,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1483,7 +1545,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           },
           {
             "name": "usernames",
@@ -1493,7 +1556,8 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1744,7 +1808,30 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiUpdateGroupRequest"
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description string."
+                },
+                "langTag": {
+                  "type": "string",
+                  "description": "Lang tag."
+                },
+                "avatarUrl": {
+                  "type": "string",
+                  "description": "Avatar URL."
+                },
+                "open": {
+                  "type": "boolean",
+                  "description": "Open is true if anyone should be allowed to join, or false if joins must be approved by a group admin."
+                }
+              },
+              "description": "Update fields in a given group."
             }
           }
         ],
@@ -1780,14 +1867,15 @@
             "type": "string"
           },
           {
-            "name": "user_ids",
+            "name": "userIds",
             "description": "The users to add.",
             "in": "query",
             "required": false,
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1822,14 +1910,15 @@
             "type": "string"
           },
           {
-            "name": "user_ids",
+            "name": "userIds",
             "description": "The users to ban.",
             "in": "query",
             "required": false,
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1864,14 +1953,15 @@
             "type": "string"
           },
           {
-            "name": "user_ids",
+            "name": "userIds",
             "description": "The users to demote.",
             "in": "query",
-            "required": true,
+            "required": false,
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1938,14 +2028,15 @@
             "type": "string"
           },
           {
-            "name": "user_ids",
+            "name": "userIds",
             "description": "The users to kick.",
             "in": "query",
             "required": false,
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -2012,14 +2103,15 @@
             "type": "string"
           },
           {
-            "name": "user_ids",
+            "name": "userIds",
             "description": "The users to promote.",
             "in": "query",
             "required": false,
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -4488,36 +4580,6 @@
       },
       "description": "Update a user's account details."
     },
-    "apiUpdateGroupRequest": {
-      "type": "object",
-      "properties": {
-        "groupId": {
-          "type": "string",
-          "description": "The ID of the group to update."
-        },
-        "name": {
-          "type": "string",
-          "description": "Name."
-        },
-        "description": {
-          "type": "string",
-          "description": "Description string."
-        },
-        "langTag": {
-          "type": "string",
-          "description": "Lang tag."
-        },
-        "avatarUrl": {
-          "type": "string",
-          "description": "Avatar URL."
-        },
-        "open": {
-          "type": "boolean",
-          "description": "Open is true if anyone should be allowed to join, or false if joins must be approved by a group admin."
-        }
-      },
-      "description": "Update fields in a given group."
-    },
     "apiUser": {
       "type": "object",
       "properties": {
@@ -4766,17 +4828,31 @@
       },
       "description": "Write objects to the storage engine."
     },
+    "modulesAccountOculus": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "The account token received from Oculus to access their profile API."
+        },
+        "vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Extra information that will be bundled in the session token."
+        }
+      },
+      "description": "Send a Oculus token to the server. Used with authenticate/link/unlink."
+    },
     "protobufAny": {
       "type": "object",
       "properties": {
-        "typeUrl": {
+        "@type": {
           "type": "string"
-        },
-        "value": {
-          "type": "string",
-          "format": "byte"
         }
-      }
+      },
+      "additionalProperties": {}
     },
     "rpcStatus": {
       "type": "object",

@@ -17,44 +17,18 @@
  */
 syntax = "proto3";
 
-package nakama.api;
+package modules;
 
 import "google/protobuf/wrappers.proto";
-
-
-option go_package = "self/api";
+option go_package = "github.com/heroiclabs/nakama/v3/modules";
 
 option java_multiple_files = true;
-option java_outer_classname = "NakamaApi";
-option java_package = "com.heroiclabs.nakama.api";
+option java_outer_classname = "NakamaSSS";
+option java_package = "com.heroiclabs.nakama.sfsf";
 
 option csharp_namespace = "Nakama.Protobuf";
 
 
-// Import Facebook friends and add them to a user's account.
-        message rpc ImportFacebookFriends (api.ImportFacebookFriendsRequest) returns (google.protobuf.Empty) {
-        option (google.api.http) = {
-        post: "/v2/friend/facebook",
-                body: "account"
-      };
-}
-
-
-            // Add Facebook to the social profiles on the current user's account.
-        rpc LinkFacebook (api.LinkFacebookRequest) returns (google.protobuf.Empty) {
-        option (google.api.http) = {
-        post: "/v2/account/link/facebook",
-                body: "account"
-};
-}
-
-            // Remove Steam from the social profiles on the current user's account.
-        rpc UnlinkSteam (api.AccountSteam) returns (google.protobuf.Empty) {
-        option (google.api.http) = {
-        post: "/v2/account/unlink/steam",
-                body: "*"
-};
-}
 
 
 // Authenticate against the server with Oculus.

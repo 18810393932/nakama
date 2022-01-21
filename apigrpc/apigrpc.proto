@@ -23,7 +23,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "github.com/heroiclabs/nakama-common/api/api.proto";
-
+import "api.proto";
 option go_package = "github.com/heroiclabs/nakama/v3/apigrpc";
 
 option java_multiple_files = true;
@@ -247,6 +247,29 @@ service Nakama {
       }
     };
   }
+
+  //==========================================================================
+
+  // Authenticate a user with Oculus against the server.
+  rpc AuthenticateOculus (modules.AuthenticateOculusRequest) returns (api.Session) {
+    option (google.api.http) = {
+      post: "/v2/account/authenticate/oculus",
+      body: "account"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      security: {
+        security_requirement: {
+          key: "BasicAuth";
+          value: {};
+        }
+      }
+    };
+  }
+
+
+  //==========================================================================
+
+
 
   // Authenticate a user with Steam against the server.
   rpc AuthenticateSteam (api.AuthenticateSteamRequest) returns (api.Session) {

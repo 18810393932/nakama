@@ -16,6 +16,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"github.com/heroiclabs/nakama-common/api"
+	"github.com/heroiclabs/nakama/v3/modules"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -619,6 +620,58 @@ func local_request_Nakama_AuthenticateGoogle_0(ctx context.Context, marshaler ru
 	}
 
 	msg, err := server.AuthenticateGoogle(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+var (
+	filter_Nakama_AuthenticateOculus_0 = &utilities.DoubleArray{Encoding: map[string]int{"account": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
+)
+
+func request_Nakama_AuthenticateOculus_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq modules.AuthenticateOculusRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Account); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Nakama_AuthenticateOculus_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.AuthenticateOculus(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_Nakama_AuthenticateOculus_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq modules.AuthenticateOculusRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Account); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Nakama_AuthenticateOculus_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.AuthenticateOculus(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -3745,7 +3798,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AddFriends")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AddFriends", runtime.WithHTTPPathPattern("/v2/friend"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3768,7 +3821,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AddGroupUsers")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AddGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/add"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3791,7 +3844,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/SessionRefresh")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/SessionRefresh", runtime.WithHTTPPathPattern("/v2/account/session/refresh"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3814,7 +3867,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/SessionLogout")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/SessionLogout", runtime.WithHTTPPathPattern("/v2/session/logout"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3837,7 +3890,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateApple")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateApple", runtime.WithHTTPPathPattern("/v2/account/authenticate/apple"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3860,7 +3913,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateCustom")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateCustom", runtime.WithHTTPPathPattern("/v2/account/authenticate/custom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3883,7 +3936,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateDevice")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateDevice", runtime.WithHTTPPathPattern("/v2/account/authenticate/device"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3906,7 +3959,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateEmail")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateEmail", runtime.WithHTTPPathPattern("/v2/account/authenticate/email"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3929,7 +3982,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateFacebook")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateFacebook", runtime.WithHTTPPathPattern("/v2/account/authenticate/facebook"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3952,7 +4005,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateFacebookInstantGame")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateFacebookInstantGame", runtime.WithHTTPPathPattern("/v2/account/authenticate/facebookinstantgame"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3975,7 +4028,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateGameCenter")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateGameCenter", runtime.WithHTTPPathPattern("/v2/account/authenticate/gamecenter"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -3998,7 +4051,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateGoogle")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateGoogle", runtime.WithHTTPPathPattern("/v2/account/authenticate/google"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4015,13 +4068,36 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 
 	})
 
+	mux.Handle("POST", pattern_Nakama_AuthenticateOculus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateOculus", runtime.WithHTTPPathPattern("/v2/account/authenticate/oculus"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_Nakama_AuthenticateOculus_0(rctx, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Nakama_AuthenticateOculus_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("POST", pattern_Nakama_AuthenticateSteam_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateSteam")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateSteam", runtime.WithHTTPPathPattern("/v2/account/authenticate/steam"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4044,7 +4120,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/BanGroupUsers")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/BanGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/ban"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4067,7 +4143,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/BlockFriends")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/BlockFriends", runtime.WithHTTPPathPattern("/v2/friend/block"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4090,7 +4166,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/CreateGroup")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/CreateGroup", runtime.WithHTTPPathPattern("/v2/group"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4113,7 +4189,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteFriends")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteFriends", runtime.WithHTTPPathPattern("/v2/friend"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4136,7 +4212,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteGroup")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteGroup", runtime.WithHTTPPathPattern("/v2/group/{group_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4159,7 +4235,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteLeaderboardRecord")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteLeaderboardRecord", runtime.WithHTTPPathPattern("/v2/leaderboard/{leaderboard_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4182,7 +4258,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteNotifications")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteNotifications", runtime.WithHTTPPathPattern("/v2/notification"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4205,7 +4281,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteStorageObjects")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DeleteStorageObjects", runtime.WithHTTPPathPattern("/v2/storage/delete"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4228,7 +4304,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/Event")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/Event", runtime.WithHTTPPathPattern("/v2/event"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4251,7 +4327,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/GetAccount")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/GetAccount", runtime.WithHTTPPathPattern("/v2/account"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4274,7 +4350,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/GetUsers")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/GetUsers", runtime.WithHTTPPathPattern("/v2/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4297,7 +4373,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/Healthcheck")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/Healthcheck", runtime.WithHTTPPathPattern("/healthcheck"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4320,7 +4396,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ImportFacebookFriends")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ImportFacebookFriends", runtime.WithHTTPPathPattern("/v2/friend/facebook"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4343,7 +4419,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ImportSteamFriends")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ImportSteamFriends", runtime.WithHTTPPathPattern("/v2/friend/steam"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4366,7 +4442,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/JoinGroup")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/JoinGroup", runtime.WithHTTPPathPattern("/v2/group/{group_id}/join"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4389,7 +4465,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/JoinTournament")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/JoinTournament", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}/join"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4412,7 +4488,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/KickGroupUsers")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/KickGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/kick"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4435,7 +4511,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LeaveGroup")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LeaveGroup", runtime.WithHTTPPathPattern("/v2/group/{group_id}/leave"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4458,7 +4534,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkApple")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkApple", runtime.WithHTTPPathPattern("/v2/account/link/apple"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4481,7 +4557,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkCustom")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkCustom", runtime.WithHTTPPathPattern("/v2/account/link/custom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4504,7 +4580,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkDevice")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkDevice", runtime.WithHTTPPathPattern("/v2/account/link/device"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4527,7 +4603,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkEmail")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkEmail", runtime.WithHTTPPathPattern("/v2/account/link/email"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4550,7 +4626,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkFacebook")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkFacebook", runtime.WithHTTPPathPattern("/v2/account/link/facebook"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4573,7 +4649,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkFacebookInstantGame")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkFacebookInstantGame", runtime.WithHTTPPathPattern("/v2/account/link/facebookinstantgame"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4596,7 +4672,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkGameCenter")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkGameCenter", runtime.WithHTTPPathPattern("/v2/account/link/gamecenter"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4619,7 +4695,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkGoogle")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkGoogle", runtime.WithHTTPPathPattern("/v2/account/link/google"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4642,7 +4718,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkSteam")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/LinkSteam", runtime.WithHTTPPathPattern("/v2/account/link/steam"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4665,7 +4741,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListChannelMessages")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListChannelMessages", runtime.WithHTTPPathPattern("/v2/channel/{channel_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4688,7 +4764,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListFriends")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListFriends", runtime.WithHTTPPathPattern("/v2/friend"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4711,7 +4787,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListGroups")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListGroups", runtime.WithHTTPPathPattern("/v2/group"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4734,7 +4810,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListGroupUsers")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4757,7 +4833,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListLeaderboardRecords")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListLeaderboardRecords", runtime.WithHTTPPathPattern("/v2/leaderboard/{leaderboard_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4780,7 +4856,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListLeaderboardRecordsAroundOwner")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListLeaderboardRecordsAroundOwner", runtime.WithHTTPPathPattern("/v2/leaderboard/{leaderboard_id}/owner/{owner_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4803,7 +4879,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListMatches")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListMatches", runtime.WithHTTPPathPattern("/v2/match"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4826,7 +4902,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListNotifications")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListNotifications", runtime.WithHTTPPathPattern("/v2/notification"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4849,7 +4925,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListStorageObjects")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListStorageObjects", runtime.WithHTTPPathPattern("/v2/storage/{collection}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4872,7 +4948,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListStorageObjects")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListStorageObjects", runtime.WithHTTPPathPattern("/v2/storage/{collection}/{user_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4895,7 +4971,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListTournaments")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListTournaments", runtime.WithHTTPPathPattern("/v2/tournament"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4918,7 +4994,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListTournamentRecords")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListTournamentRecords", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4941,7 +5017,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListTournamentRecordsAroundOwner")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListTournamentRecordsAroundOwner", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}/owner/{owner_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4964,7 +5040,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListUserGroups")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ListUserGroups", runtime.WithHTTPPathPattern("/v2/user/{user_id}/group"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -4987,7 +5063,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/PromoteGroupUsers")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/PromoteGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/promote"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5010,7 +5086,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DemoteGroupUsers")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/DemoteGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/demote"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5033,7 +5109,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ReadStorageObjects")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ReadStorageObjects", runtime.WithHTTPPathPattern("/v2/storage"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5056,7 +5132,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/RpcFunc")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/RpcFunc", runtime.WithHTTPPathPattern("/v2/rpc/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5079,7 +5155,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/RpcFunc")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/RpcFunc", runtime.WithHTTPPathPattern("/v2/rpc/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5102,7 +5178,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkApple")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkApple", runtime.WithHTTPPathPattern("/v2/account/unlink/apple"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5125,7 +5201,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkCustom")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkCustom", runtime.WithHTTPPathPattern("/v2/account/unlink/custom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5148,7 +5224,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkDevice")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkDevice", runtime.WithHTTPPathPattern("/v2/account/unlink/device"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5171,7 +5247,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkEmail")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkEmail", runtime.WithHTTPPathPattern("/v2/account/unlink/email"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5194,7 +5270,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkFacebook")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkFacebook", runtime.WithHTTPPathPattern("/v2/account/unlink/facebook"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5217,7 +5293,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkFacebookInstantGame")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkFacebookInstantGame", runtime.WithHTTPPathPattern("/v2/account/unlink/facebookinstantgame"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5240,7 +5316,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkGameCenter")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkGameCenter", runtime.WithHTTPPathPattern("/v2/account/unlink/gamecenter"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5263,7 +5339,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkGoogle")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkGoogle", runtime.WithHTTPPathPattern("/v2/account/unlink/google"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5286,7 +5362,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkSteam")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkSteam", runtime.WithHTTPPathPattern("/v2/account/unlink/steam"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5309,7 +5385,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UpdateAccount")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UpdateAccount", runtime.WithHTTPPathPattern("/v2/account"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5332,7 +5408,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UpdateGroup")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/UpdateGroup", runtime.WithHTTPPathPattern("/v2/group/{group_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5355,7 +5431,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseApple")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseApple", runtime.WithHTTPPathPattern("/v2/iap/purchase/apple"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5378,7 +5454,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseGoogle")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseGoogle", runtime.WithHTTPPathPattern("/v2/iap/purchase/google"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5401,7 +5477,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseHuawei")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseHuawei", runtime.WithHTTPPathPattern("/v2/iap/purchase/huawei"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5424,7 +5500,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/WriteLeaderboardRecord")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/WriteLeaderboardRecord", runtime.WithHTTPPathPattern("/v2/leaderboard/{leaderboard_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5447,7 +5523,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/WriteStorageObjects")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/WriteStorageObjects", runtime.WithHTTPPathPattern("/v2/storage"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5470,7 +5546,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/WriteTournamentRecord")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/WriteTournamentRecord", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5493,7 +5569,7 @@ func RegisterNakamaHandlerServer(ctx context.Context, mux *runtime.ServeMux, ser
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/WriteTournamentRecord")
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/nakama.api.Nakama/WriteTournamentRecord", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5540,7 +5616,7 @@ func RegisterNakamaHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMu
 
 // RegisterNakamaHandler registers the http handlers for service Nakama to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterNakamaHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+func RegisterNakamaHandler(ctx context.Context, mux *runtime.ServeMux, conn grpc.ClientConnInterface) error {
 	return RegisterNakamaHandlerClient(ctx, mux, NewNakamaClient(conn))
 }
 
@@ -5555,7 +5631,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AddFriends")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AddFriends", runtime.WithHTTPPathPattern("/v2/friend"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5575,7 +5651,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AddGroupUsers")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AddGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/add"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5595,7 +5671,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/SessionRefresh")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/SessionRefresh", runtime.WithHTTPPathPattern("/v2/account/session/refresh"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5615,7 +5691,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/SessionLogout")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/SessionLogout", runtime.WithHTTPPathPattern("/v2/session/logout"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5635,7 +5711,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateApple")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateApple", runtime.WithHTTPPathPattern("/v2/account/authenticate/apple"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5655,7 +5731,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateCustom")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateCustom", runtime.WithHTTPPathPattern("/v2/account/authenticate/custom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5675,7 +5751,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateDevice")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateDevice", runtime.WithHTTPPathPattern("/v2/account/authenticate/device"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5695,7 +5771,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateEmail")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateEmail", runtime.WithHTTPPathPattern("/v2/account/authenticate/email"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5715,7 +5791,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateFacebook")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateFacebook", runtime.WithHTTPPathPattern("/v2/account/authenticate/facebook"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5735,7 +5811,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateFacebookInstantGame")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateFacebookInstantGame", runtime.WithHTTPPathPattern("/v2/account/authenticate/facebookinstantgame"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5755,7 +5831,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateGameCenter")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateGameCenter", runtime.WithHTTPPathPattern("/v2/account/authenticate/gamecenter"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5775,7 +5851,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateGoogle")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateGoogle", runtime.WithHTTPPathPattern("/v2/account/authenticate/google"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5791,11 +5867,31 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 
 	})
 
+	mux.Handle("POST", pattern_Nakama_AuthenticateOculus_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateOculus", runtime.WithHTTPPathPattern("/v2/account/authenticate/oculus"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Nakama_AuthenticateOculus_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Nakama_AuthenticateOculus_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("POST", pattern_Nakama_AuthenticateSteam_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateSteam")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/AuthenticateSteam", runtime.WithHTTPPathPattern("/v2/account/authenticate/steam"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5815,7 +5911,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/BanGroupUsers")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/BanGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/ban"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5835,7 +5931,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/BlockFriends")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/BlockFriends", runtime.WithHTTPPathPattern("/v2/friend/block"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5855,7 +5951,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/CreateGroup")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/CreateGroup", runtime.WithHTTPPathPattern("/v2/group"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5875,7 +5971,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteFriends")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteFriends", runtime.WithHTTPPathPattern("/v2/friend"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5895,7 +5991,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteGroup")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteGroup", runtime.WithHTTPPathPattern("/v2/group/{group_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5915,7 +6011,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteLeaderboardRecord")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteLeaderboardRecord", runtime.WithHTTPPathPattern("/v2/leaderboard/{leaderboard_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5935,7 +6031,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteNotifications")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteNotifications", runtime.WithHTTPPathPattern("/v2/notification"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5955,7 +6051,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteStorageObjects")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DeleteStorageObjects", runtime.WithHTTPPathPattern("/v2/storage/delete"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5975,7 +6071,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/Event")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/Event", runtime.WithHTTPPathPattern("/v2/event"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -5995,7 +6091,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/GetAccount")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/GetAccount", runtime.WithHTTPPathPattern("/v2/account"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6015,7 +6111,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/GetUsers")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/GetUsers", runtime.WithHTTPPathPattern("/v2/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6035,7 +6131,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/Healthcheck")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/Healthcheck", runtime.WithHTTPPathPattern("/healthcheck"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6055,7 +6151,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ImportFacebookFriends")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ImportFacebookFriends", runtime.WithHTTPPathPattern("/v2/friend/facebook"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6075,7 +6171,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ImportSteamFriends")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ImportSteamFriends", runtime.WithHTTPPathPattern("/v2/friend/steam"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6095,7 +6191,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/JoinGroup")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/JoinGroup", runtime.WithHTTPPathPattern("/v2/group/{group_id}/join"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6115,7 +6211,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/JoinTournament")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/JoinTournament", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}/join"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6135,7 +6231,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/KickGroupUsers")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/KickGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/kick"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6155,7 +6251,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LeaveGroup")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LeaveGroup", runtime.WithHTTPPathPattern("/v2/group/{group_id}/leave"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6175,7 +6271,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkApple")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkApple", runtime.WithHTTPPathPattern("/v2/account/link/apple"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6195,7 +6291,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkCustom")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkCustom", runtime.WithHTTPPathPattern("/v2/account/link/custom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6215,7 +6311,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkDevice")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkDevice", runtime.WithHTTPPathPattern("/v2/account/link/device"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6235,7 +6331,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkEmail")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkEmail", runtime.WithHTTPPathPattern("/v2/account/link/email"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6255,7 +6351,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkFacebook")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkFacebook", runtime.WithHTTPPathPattern("/v2/account/link/facebook"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6275,7 +6371,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkFacebookInstantGame")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkFacebookInstantGame", runtime.WithHTTPPathPattern("/v2/account/link/facebookinstantgame"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6295,7 +6391,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkGameCenter")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkGameCenter", runtime.WithHTTPPathPattern("/v2/account/link/gamecenter"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6315,7 +6411,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkGoogle")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkGoogle", runtime.WithHTTPPathPattern("/v2/account/link/google"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6335,7 +6431,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkSteam")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/LinkSteam", runtime.WithHTTPPathPattern("/v2/account/link/steam"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6355,7 +6451,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListChannelMessages")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListChannelMessages", runtime.WithHTTPPathPattern("/v2/channel/{channel_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6375,7 +6471,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListFriends")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListFriends", runtime.WithHTTPPathPattern("/v2/friend"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6395,7 +6491,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListGroups")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListGroups", runtime.WithHTTPPathPattern("/v2/group"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6415,7 +6511,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListGroupUsers")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/user"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6435,7 +6531,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListLeaderboardRecords")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListLeaderboardRecords", runtime.WithHTTPPathPattern("/v2/leaderboard/{leaderboard_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6455,7 +6551,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListLeaderboardRecordsAroundOwner")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListLeaderboardRecordsAroundOwner", runtime.WithHTTPPathPattern("/v2/leaderboard/{leaderboard_id}/owner/{owner_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6475,7 +6571,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListMatches")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListMatches", runtime.WithHTTPPathPattern("/v2/match"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6495,7 +6591,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListNotifications")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListNotifications", runtime.WithHTTPPathPattern("/v2/notification"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6515,7 +6611,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListStorageObjects")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListStorageObjects", runtime.WithHTTPPathPattern("/v2/storage/{collection}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6535,7 +6631,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListStorageObjects")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListStorageObjects", runtime.WithHTTPPathPattern("/v2/storage/{collection}/{user_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6555,7 +6651,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListTournaments")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListTournaments", runtime.WithHTTPPathPattern("/v2/tournament"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6575,7 +6671,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListTournamentRecords")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListTournamentRecords", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6595,7 +6691,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListTournamentRecordsAroundOwner")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListTournamentRecordsAroundOwner", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}/owner/{owner_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6615,7 +6711,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListUserGroups")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ListUserGroups", runtime.WithHTTPPathPattern("/v2/user/{user_id}/group"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6635,7 +6731,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/PromoteGroupUsers")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/PromoteGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/promote"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6655,7 +6751,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DemoteGroupUsers")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/DemoteGroupUsers", runtime.WithHTTPPathPattern("/v2/group/{group_id}/demote"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6675,7 +6771,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ReadStorageObjects")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ReadStorageObjects", runtime.WithHTTPPathPattern("/v2/storage"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6695,7 +6791,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/RpcFunc")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/RpcFunc", runtime.WithHTTPPathPattern("/v2/rpc/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6715,7 +6811,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/RpcFunc")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/RpcFunc", runtime.WithHTTPPathPattern("/v2/rpc/{id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6735,7 +6831,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkApple")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkApple", runtime.WithHTTPPathPattern("/v2/account/unlink/apple"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6755,7 +6851,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkCustom")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkCustom", runtime.WithHTTPPathPattern("/v2/account/unlink/custom"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6775,7 +6871,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkDevice")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkDevice", runtime.WithHTTPPathPattern("/v2/account/unlink/device"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6795,7 +6891,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkEmail")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkEmail", runtime.WithHTTPPathPattern("/v2/account/unlink/email"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6815,7 +6911,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkFacebook")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkFacebook", runtime.WithHTTPPathPattern("/v2/account/unlink/facebook"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6835,7 +6931,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkFacebookInstantGame")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkFacebookInstantGame", runtime.WithHTTPPathPattern("/v2/account/unlink/facebookinstantgame"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6855,7 +6951,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkGameCenter")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkGameCenter", runtime.WithHTTPPathPattern("/v2/account/unlink/gamecenter"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6875,7 +6971,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkGoogle")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkGoogle", runtime.WithHTTPPathPattern("/v2/account/unlink/google"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6895,7 +6991,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkSteam")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UnlinkSteam", runtime.WithHTTPPathPattern("/v2/account/unlink/steam"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6915,7 +7011,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UpdateAccount")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UpdateAccount", runtime.WithHTTPPathPattern("/v2/account"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6935,7 +7031,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UpdateGroup")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/UpdateGroup", runtime.WithHTTPPathPattern("/v2/group/{group_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6955,7 +7051,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseApple")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseApple", runtime.WithHTTPPathPattern("/v2/iap/purchase/apple"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6975,7 +7071,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseGoogle")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseGoogle", runtime.WithHTTPPathPattern("/v2/iap/purchase/google"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -6995,7 +7091,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseHuawei")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/ValidatePurchaseHuawei", runtime.WithHTTPPathPattern("/v2/iap/purchase/huawei"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -7015,7 +7111,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/WriteLeaderboardRecord")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/WriteLeaderboardRecord", runtime.WithHTTPPathPattern("/v2/leaderboard/{leaderboard_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -7035,7 +7131,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/WriteStorageObjects")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/WriteStorageObjects", runtime.WithHTTPPathPattern("/v2/storage"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -7055,7 +7151,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/WriteTournamentRecord")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/WriteTournamentRecord", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -7075,7 +7171,7 @@ func RegisterNakamaHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/WriteTournamentRecord")
+		rctx, err := runtime.AnnotateContext(ctx, mux, req, "/nakama.api.Nakama/WriteTournamentRecord", runtime.WithHTTPPathPattern("/v2/tournament/{tournament_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -7118,6 +7214,8 @@ var (
 	pattern_Nakama_AuthenticateGameCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v2", "account", "authenticate", "gamecenter"}, ""))
 
 	pattern_Nakama_AuthenticateGoogle_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v2", "account", "authenticate", "google"}, ""))
+
+	pattern_Nakama_AuthenticateOculus_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v2", "account", "authenticate", "oculus"}, ""))
 
 	pattern_Nakama_AuthenticateSteam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v2", "account", "authenticate", "steam"}, ""))
 
@@ -7274,6 +7372,8 @@ var (
 	forward_Nakama_AuthenticateGameCenter_0 = runtime.ForwardResponseMessage
 
 	forward_Nakama_AuthenticateGoogle_0 = runtime.ForwardResponseMessage
+
+	forward_Nakama_AuthenticateOculus_0 = runtime.ForwardResponseMessage
 
 	forward_Nakama_AuthenticateSteam_0 = runtime.ForwardResponseMessage
 
