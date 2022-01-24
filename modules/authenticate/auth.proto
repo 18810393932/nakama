@@ -20,7 +20,7 @@ syntax = "proto3";
 package modules;
 
 import "google/protobuf/wrappers.proto";
-option go_package = "github.com/heroiclabs/nakama/v3/modules";
+option go_package = "github.com/heroiclabs/nakama/v3/modules/authenticate";
 
 option java_multiple_files = true;
 option java_outer_classname = "NakamaSSS";
@@ -47,8 +47,10 @@ message AuthenticateOculusRequest {
 message AccountOculus {
     // A custom identifier.
     string id = 1;
+    // Set the username on the account at register. Must be unique.
+    string display_name = 2;
     // Extra information that will be bundled in the session token.
-    map<string, string> vars = 2;
+    map<string, string> vars = 3;
 }
 
 // Import Facebook friends into the current user's account.

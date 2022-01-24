@@ -16,7 +16,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"github.com/heroiclabs/nakama-common/api"
-	"github.com/heroiclabs/nakama/v3/modules"
+	"github.com/heroiclabs/nakama/v3/modules/authenticate"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
@@ -629,7 +629,7 @@ var (
 )
 
 func request_Nakama_AuthenticateOculus_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq modules.AuthenticateOculusRequest
+	var protoReq authenticate.AuthenticateOculusRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -653,7 +653,7 @@ func request_Nakama_AuthenticateOculus_0(ctx context.Context, marshaler runtime.
 }
 
 func local_request_Nakama_AuthenticateOculus_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq modules.AuthenticateOculusRequest
+	var protoReq authenticate.AuthenticateOculusRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -681,7 +681,7 @@ var (
 )
 
 func request_Nakama_ImportOculusFriends_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq modules.ImportOculusFriendsRequest
+	var protoReq authenticate.ImportOculusFriendsRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -705,7 +705,7 @@ func request_Nakama_ImportOculusFriends_0(ctx context.Context, marshaler runtime
 }
 
 func local_request_Nakama_ImportOculusFriends_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq modules.ImportOculusFriendsRequest
+	var protoReq authenticate.ImportOculusFriendsRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -733,7 +733,7 @@ var (
 )
 
 func request_Nakama_LinkOculus_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq modules.LinkOculusRequest
+	var protoReq authenticate.LinkOculusRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -757,7 +757,7 @@ func request_Nakama_LinkOculus_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_Nakama_LinkOculus_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq modules.LinkOculusRequest
+	var protoReq authenticate.LinkOculusRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -781,7 +781,7 @@ func local_request_Nakama_LinkOculus_0(ctx context.Context, marshaler runtime.Ma
 }
 
 func request_Nakama_UnlinkOculus_0(ctx context.Context, marshaler runtime.Marshaler, client NakamaClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq modules.AccountOculus
+	var protoReq authenticate.AccountOculus
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -798,7 +798,7 @@ func request_Nakama_UnlinkOculus_0(ctx context.Context, marshaler runtime.Marsha
 }
 
 func local_request_Nakama_UnlinkOculus_0(ctx context.Context, marshaler runtime.Marshaler, server NakamaServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq modules.AccountOculus
+	var protoReq authenticate.AccountOculus
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

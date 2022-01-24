@@ -4950,6 +4950,10 @@
           "type": "string",
           "description": "A custom identifier."
         },
+        "displayName": {
+          "type": "string",
+          "description": "Set the username on the account at register. Must be unique."
+        },
         "vars": {
           "type": "object",
           "additionalProperties": {
