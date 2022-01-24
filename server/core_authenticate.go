@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/heroiclabs/nakama/v3/modules/authenticate"
 	"strconv"
 	"strings"
 	"time"
@@ -118,20 +119,19 @@ func AuthenticateApple(ctx context.Context, logger *zap.Logger, db *sql.DB, clie
 	return userID, username, true, nil
 }
 
-func AuthenticateOculus(ctx context.Context, logger *zap.Logger, db *sql.DB, oculusID, username string, create bool) (string, string, bool, error) {
+func AuthenticateOculus(ctx context.Context, logger *zap.Logger, db *sql.DB, accountOculus *authenticate.AccountOculus, username string, create bool) (string, string, bool, error) {
 	found := true
-
 	// Look for an existing account.
 	query := "SELECT id, username, disable_time FROM users WHERE oculus_id = $1"
 	var dbUserID string
 	var dbUsername string
 	var dbDisableTime pgtype.Timestamptz
-	err := db.QueryRowContext(ctx, query, oculusID).Scan(&dbUserID, &dbUsername, &dbDisableTime)
+	err := db.QueryRowContext(ctx, query, accountOculus.Id).Scan(&dbUserID, &dbUsername, &dbDisableTime)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			found = false
 		} else {
-			logger.Error("Error looking up user by oculusID ID.", zap.Error(err), zap.String("oculusID", oculusID), zap.String("username", username), zap.Bool("create", create))
+			logger.Error("Error looking up user by oculusID ID.", zap.Error(err), zap.String("oculusID", accountOculus.Id), zap.String("username", username), zap.Bool("create", create))
 			return "", "", false, status.Error(codes.Internal, "Error finding user account.")
 		}
 	}
@@ -140,7 +140,7 @@ func AuthenticateOculus(ctx context.Context, logger *zap.Logger, db *sql.DB, ocu
 	if found {
 		// Check if it's disabled.
 		if dbDisableTime.Status == pgtype.Present && dbDisableTime.Time.Unix() != 0 {
-			logger.Info("User account is disabled.", zap.String("oculusID", oculusID), zap.String("username", username), zap.Bool("create", create))
+			logger.Info("User account is disabled.", zap.String("oculusID", accountOculus.Id), zap.String("username", username), zap.Bool("create", create))
 			return "", "", false, status.Error(codes.PermissionDenied, "User account banned.")
 		}
 
@@ -154,8 +154,8 @@ func AuthenticateOculus(ctx context.Context, logger *zap.Logger, db *sql.DB, ocu
 
 	// Create a new account.
 	userID := uuid.Must(uuid.NewV4()).String()
-	query = "INSERT INTO users (id, username, oculus_id, create_time, update_time) VALUES ($1, $2, $3, now(), now())"
-	result, err := db.ExecContext(ctx, query, userID, username, oculusID)
+	query = "INSERT INTO users (id, username, display_name,oculus_id, create_time, update_time) VALUES ($1, $2, $3,$4, now(), now())"
+	result, err := db.ExecContext(ctx, query, userID, username, accountOculus.DisplayName, accountOculus.Id)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == dbErrorUniqueViolation {
@@ -164,11 +164,11 @@ func AuthenticateOculus(ctx context.Context, logger *zap.Logger, db *sql.DB, ocu
 				return "", "", false, status.Error(codes.AlreadyExists, "Username is already in use.")
 			} else if strings.Contains(pgErr.Message, "users_oculus_id_key") {
 				// A concurrent write has inserted this oculus ID.
-				logger.Info("Did not insert new user as oculus ID already exists.", zap.Error(err), zap.String("oculusID", oculusID), zap.String("username", username), zap.Bool("create", create))
+				logger.Info("Did not insert new user as oculus ID already exists.", zap.Error(err), zap.String("oculusID", accountOculus.Id), zap.String("username", username), zap.Bool("create", create))
 				return "", "", false, status.Error(codes.Internal, "Error finding or creating user account.")
 			}
 		}
-		logger.Error("Cannot find or create user with oculus ID.", zap.Error(err), zap.String("oculusID", oculusID), zap.String("username", username), zap.Bool("create", create))
+		logger.Error("Cannot find or create user with oculus ID.", zap.Error(err), zap.String("oculusID", accountOculus.Id), zap.String("username", username), zap.Bool("create", create))
 		return "", "", false, status.Error(codes.Internal, "Error finding or creating user account.")
 	}
 
