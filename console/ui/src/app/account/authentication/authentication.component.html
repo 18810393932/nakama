@@ -114,6 +114,26 @@
       </div>
     </div>
   </div>
+ <div class="row">
+    <div class="col-md-6 d-flex justify-content-start align-items-baseline">
+      <div class="col-3 pl-0">
+        <label class="d-inline" for="google_id">Oculus ID</label>
+      </div>
+      <div class="input-group">
+        <input type="text" id="oculus_id" [value]="extend.oculus_id" class="form-control form-control-sm" disabled>
+        <div class="input-group-append">
+          <button [disabled]="!updateAllowed() || !account.user.google_id || account.user.google_id === ''" class="btn btn-sm btn-outline-danger" (click)="unlinkGoogle($event)" type="button">Unlink</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 d-flex justify-content-start align-items-baseline">
+      <div class="col-3 pl-0">
+        <label class="d-inline" for="steam_id">Steam ID</label>
+      </div>
+      <div class="input-group">
+      </div>
+    </div>
+  </div>
 
   <!-- <hr class="my-4" /> -->
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {Component, Injectable, OnInit} from '@angular/core';
-import {ApiAccount, ConsoleService, UserRole} from '../console.service';
+import {Account, ApiAccount, ConsoleService, UserRole} from '../console.service';
 import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot} from '@angular/router';
 import {AuthenticationService} from '../authentication.service';
 import {saveAs} from 'file-saver';
@@ -47,6 +47,7 @@ export class AccountComponent implements OnInit {
     this.route.data.subscribe(
       d => {
         this.account = d[0].account;
+        console.log('========================================================');
       },
       err => {
         this.error = err;
@@ -130,8 +131,9 @@ export class AccountComponent implements OnInit {
 export class AccountResolver implements Resolve<ApiAccount> {
   constructor(private readonly consoleService: ConsoleService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ApiAccount> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Account> {
     const userId = route.paramMap.get('id');
-    return this.consoleService.getAccount('', userId);
+    const res = this.consoleService.getMember('', userId);
+    return res;
   }
 }

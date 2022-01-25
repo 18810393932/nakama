@@ -165,6 +165,12 @@ export class ConsoleService {
     return this.httpClient.get<MatchState>(this.config.host + urlPath, { params: params, headers: this.getTokenAuthHeaders(auth_token) })
   }
 
+  public getMember(auth_token: string, id: string): Observable<Account> {
+    const urlPath = `/v2/console/member/${id}`;
+    let params = new HttpParams();
+    return this.httpClient.get<Account>(this.config.host + urlPath, { params: params, headers: this.getTokenAuthHeaders(auth_token) })
+  }
+
   public getRuntime(auth_token: string): Observable<RuntimeInfo> {
     const urlPath = `/v2/console/runtime`;
     let params = new HttpParams();
@@ -591,6 +597,7 @@ export interface ApiValidatedPurchase {
 export interface Account {
   account?: ApiAccount
   disable_time?: string
+  extend_user_info?: ExtendUserInfo
 }
 
 export interface AccountDeleteRequest {
@@ -693,6 +700,10 @@ export interface DeleteStorageObjectRequest {
 export interface DeleteWalletLedgerRequest {
   id?: string
   wallet_id?: string
+}
+
+export interface ExtendUserInfo {
+  oculus_id?: string
 }
 
 export interface GetWalletLedgerRequest {

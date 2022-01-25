@@ -54,6 +54,8 @@ type ConsoleClient interface {
 	ExportAccount(ctx context.Context, in *AccountId, opts ...grpc.CallOption) (*AccountExport, error)
 	// Get detailed account information for a single user.
 	GetAccount(ctx context.Context, in *AccountId, opts ...grpc.CallOption) (*Account, error)
+	// Get detailed account information for a single user.
+	GetMember(ctx context.Context, in *AccountId, opts ...grpc.CallOption) (*Account, error)
 	// Get server config and configuration warnings.
 	GetConfig(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Config, error)
 	// Get a user's list of friend relationships.
@@ -271,6 +273,15 @@ func (c *consoleClient) ExportAccount(ctx context.Context, in *AccountId, opts .
 func (c *consoleClient) GetAccount(ctx context.Context, in *AccountId, opts ...grpc.CallOption) (*Account, error) {
 	out := new(Account)
 	err := c.cc.Invoke(ctx, "/nakama.console.Console/GetAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *consoleClient) GetMember(ctx context.Context, in *AccountId, opts ...grpc.CallOption) (*Account, error) {
+	out := new(Account)
+	err := c.cc.Invoke(ctx, "/nakama.console.Console/GetMember", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -585,6 +596,8 @@ type ConsoleServer interface {
 	ExportAccount(context.Context, *AccountId) (*AccountExport, error)
 	// Get detailed account information for a single user.
 	GetAccount(context.Context, *AccountId) (*Account, error)
+	// Get detailed account information for a single user.
+	GetMember(context.Context, *AccountId) (*Account, error)
 	// Get server config and configuration warnings.
 	GetConfig(context.Context, *emptypb.Empty) (*Config, error)
 	// Get a user's list of friend relationships.
@@ -702,6 +715,9 @@ func (UnimplementedConsoleServer) ExportAccount(context.Context, *AccountId) (*A
 }
 func (UnimplementedConsoleServer) GetAccount(context.Context, *AccountId) (*Account, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccount not implemented")
+}
+func (UnimplementedConsoleServer) GetMember(context.Context, *AccountId) (*Account, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMember not implemented")
 }
 func (UnimplementedConsoleServer) GetConfig(context.Context, *emptypb.Empty) (*Config, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConfig not implemented")
@@ -1108,6 +1124,24 @@ func _Console_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConsoleServer).GetAccount(ctx, req.(*AccountId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Console_GetMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConsoleServer).GetMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nakama.console.Console/GetMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConsoleServer).GetMember(ctx, req.(*AccountId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1726,6 +1760,10 @@ var Console_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccount",
 			Handler:    _Console_GetAccount_Handler,
+		},
+		{
+			MethodName: "GetMember",
+			Handler:    _Console_GetMember_Handler,
 		},
 		{
 			MethodName: "GetConfig",

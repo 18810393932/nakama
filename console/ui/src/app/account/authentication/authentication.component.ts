@@ -13,7 +13,14 @@
 // limitations under the License.
 
 import {Component, OnInit} from '@angular/core';
-import {ApiAccount, ConsoleService, UnlinkDeviceRequest, UpdateAccountRequest, UserRole} from '../../console.service';
+import {
+  Account,
+  ApiAccount,
+  ConsoleService, ExtendUserInfo,
+  UnlinkDeviceRequest,
+  UpdateAccountRequest,
+  UserRole
+} from '../../console.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthenticationService} from '../../authentication.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
@@ -25,6 +32,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 export class AuthenticationComponent implements OnInit {
   public error = '';
   public account: ApiAccount;
+  public extend: ExtendUserInfo;
   public accountForm: FormGroup;
   public updating = false;
   public updated = false;
@@ -47,14 +55,13 @@ export class AuthenticationComponent implements OnInit {
     this.route.parent.data.subscribe(
       d => {
         this.account = d[0].account;
+        this.extend = d[0].extend_user_info;
         this.f.email.setValue(this.account.email);
         this.f.password.setValue('');
         this.f.selected_device_id_index.setValue(0);
-
         if (this.account.devices.length === 0) {
           this.f.selected_device_id_index.disable();
         }
-
         if (!this.updateAllowed()) {
           this.accountForm.disable();
         }

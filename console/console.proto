@@ -74,7 +74,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
  */
 service Console {
   // Authenticate a console user with username and password.
-  rpc Authenticate (AuthenticateRequest) returns (ConsoleSession) {
+  rpc Authenticate(AuthenticateRequest) returns (ConsoleSession) {
     option (google.api.http) = {
       post: "/v2/console/authenticate",
       body: "*"
@@ -87,7 +87,7 @@ service Console {
   }
 
   // Add a new console user.
-  rpc AddUser (AddUserRequest) returns (google.protobuf.Empty) {
+  rpc AddUser(AddUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v2/console/user",
       body: "*"
@@ -95,12 +95,12 @@ service Console {
   }
 
   // Ban a user.
-  rpc BanAccount (AccountId) returns (google.protobuf.Empty) {
+  rpc BanAccount(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/ban";
   }
 
   // API Explorer - call an endpoint
-  rpc CallApiEndpoint (CallApiEndpointRequest) returns (CallApiEndpointResponse) {
+  rpc CallApiEndpoint(CallApiEndpointRequest) returns (CallApiEndpointResponse) {
     option (google.api.http) = {
       post: "/v2/console/api/endpoints/{method}",
       body: "*"
@@ -108,35 +108,35 @@ service Console {
   }
 
   // API Explorer - call a custom RPC endpoint
-  rpc CallRpcEndpoint (CallApiEndpointRequest) returns (CallApiEndpointResponse) {
-  option (google.api.http) = {
+  rpc CallRpcEndpoint(CallApiEndpointRequest) returns (CallApiEndpointResponse) {
+    option (google.api.http) = {
       post: "/v2/console/api/endpoints/rpc/{method}",
       body: "*"
     };
   }
 
   // Delete all information stored for a user account.
-  rpc DeleteAccount (AccountDeleteRequest) returns (google.protobuf.Empty) {
+  rpc DeleteAccount(AccountDeleteRequest) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/account/{id}";
   }
 
   // Delete the friend relationship between two users.
-  rpc DeleteFriend (DeleteFriendRequest) returns (google.protobuf.Empty) {
+  rpc DeleteFriend(DeleteFriendRequest) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/account/{id}/friend/{friend_id}";
   }
 
   // Remove a user from a group.
-  rpc DeleteGroupUser (DeleteGroupUserRequest) returns (google.protobuf.Empty) {
+  rpc DeleteGroupUser(DeleteGroupUserRequest) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/account/{id}/group/{group_id}";
   }
 
   // Delete all storage data.
-  rpc DeleteStorage (google.protobuf.Empty) returns (google.protobuf.Empty) {
+  rpc DeleteStorage(google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/storage";
   }
 
   // Delete a storage object.
-  rpc DeleteStorageObject (DeleteStorageObjectRequest) returns (google.protobuf.Empty) {
+  rpc DeleteStorageObject(DeleteStorageObjectRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v2/console/storage/{collection}/{key}/{user_id}",
       additional_bindings {
@@ -146,141 +146,146 @@ service Console {
   }
 
   // Delete (non-recorded) all user accounts.
-  rpc DeleteAccounts (google.protobuf.Empty) returns (google.protobuf.Empty) {
+  rpc DeleteAccounts(google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/account";
   }
 
   // Delete leaderboard
-  rpc DeleteLeaderboard (LeaderboardRequest) returns (google.protobuf.Empty) {
+  rpc DeleteLeaderboard(LeaderboardRequest) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/leaderboard/{id}";
   }
 
   // Delete leaderboard record
-  rpc DeleteLeaderboardRecord (DeleteLeaderboardRecordRequest) returns (google.protobuf.Empty) {
+  rpc DeleteLeaderboardRecord(DeleteLeaderboardRecordRequest) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/leaderboard/{id}/owner/{owner_id}";
   }
 
   // Delete console user.
-  rpc DeleteUser (Username) returns (google.protobuf.Empty) {
+  rpc DeleteUser(Username) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/user";
   }
 
   // Delete a wallet ledger item.
-  rpc DeleteWalletLedger (DeleteWalletLedgerRequest) returns (google.protobuf.Empty) {
+  rpc DeleteWalletLedger(DeleteWalletLedgerRequest) returns (google.protobuf.Empty) {
     option (google.api.http).delete = "/v2/console/account/{id}/wallet/{wallet_id}";
   }
 
   // Export all information stored about a user account.
-  rpc ExportAccount (AccountId) returns (AccountExport) {
+  rpc ExportAccount(AccountId) returns (AccountExport) {
     option (google.api.http).get = "/v2/console/account/{id}/export";
   }
 
   // Get detailed account information for a single user.
-  rpc GetAccount (AccountId) returns (Account) {
+  rpc GetAccount(AccountId) returns (Account) {
     option (google.api.http).get = "/v2/console/account/{id}";
   }
 
+  // Get detailed account information for a single user.
+  rpc GetMember(AccountId) returns (Account) {
+    option (google.api.http).get = "/v2/console/member/{id}";
+  }
+
   // Get server config and configuration warnings.
-  rpc GetConfig (google.protobuf.Empty) returns (Config) {
+  rpc GetConfig(google.protobuf.Empty) returns (Config) {
     option (google.api.http).get = "/v2/console/config";
   }
 
   // Get a user's list of friend relationships.
-  rpc GetFriends (AccountId) returns (nakama.api.FriendList) {
+  rpc GetFriends(AccountId) returns (nakama.api.FriendList) {
     option (google.api.http).get = "/v2/console/account/{id}/friend";
   }
 
   // Get a list of groups the user is a member of.
-  rpc GetGroups (AccountId) returns (nakama.api.UserGroupList) {
+  rpc GetGroups(AccountId) returns (nakama.api.UserGroupList) {
     option (google.api.http).get = "/v2/console/account/{id}/group";
   }
 
   // Get leaderboard.
-  rpc GetLeaderboard (LeaderboardRequest) returns (Leaderboard) {
+  rpc GetLeaderboard(LeaderboardRequest) returns (Leaderboard) {
     option (google.api.http).get = "/v2/console/leaderboard/{id}";
   }
 
   // Get current state of a running match
-  rpc GetMatchState (MatchStateRequest) returns (MatchState) {
+  rpc GetMatchState(MatchStateRequest) returns (MatchState) {
     option (google.api.http).get = "/v2/console/match/{id}/state";
   }
 
   // Get runtime info
-  rpc GetRuntime (google.protobuf.Empty) returns (RuntimeInfo) {
+  rpc GetRuntime(google.protobuf.Empty) returns (RuntimeInfo) {
     option (google.api.http).get = "/v2/console/runtime";
   }
 
   // Get current status data for all nodes.
-  rpc GetStatus (google.protobuf.Empty) returns (StatusList) {
+  rpc GetStatus(google.protobuf.Empty) returns (StatusList) {
     option (google.api.http).get = "/v2/console/status";
   }
 
   // Get a storage object.
-  rpc GetStorage (nakama.api.ReadStorageObjectId) returns (nakama.api.StorageObject) {
+  rpc GetStorage(nakama.api.ReadStorageObjectId) returns (nakama.api.StorageObject) {
     option (google.api.http).get = "/v2/console/storage/{collection}/{key}/{user_id}";
   }
 
   // Get a list of the user's wallet transactions.
-  rpc GetWalletLedger (GetWalletLedgerRequest) returns (WalletLedgerList) {
+  rpc GetWalletLedger(GetWalletLedgerRequest) returns (WalletLedgerList) {
     option (google.api.http).get = "/v2/console/account/{account_id}/wallet";
   }
 
   // API Explorer - list all endpoints
-  rpc ListApiEndpoints (google.protobuf.Empty) returns (ApiEndpointList) {
+  rpc ListApiEndpoints(google.protobuf.Empty) returns (ApiEndpointList) {
     option (google.api.http).get = "/v2/console/api/endpoints";
   }
 
   // List leaderboard records.
-  rpc ListLeaderboardRecords (api.ListLeaderboardRecordsRequest) returns (api.LeaderboardRecordList) {
+  rpc ListLeaderboardRecords(api.ListLeaderboardRecordsRequest) returns (api.LeaderboardRecordList) {
     option (google.api.http).get = "/v2/console/leaderboard/{leaderboard_id}/records";
   }
 
   // List leaderboards
-  rpc ListLeaderboards (google.protobuf.Empty) returns (LeaderboardList) {
+  rpc ListLeaderboards(google.protobuf.Empty) returns (LeaderboardList) {
     option (google.api.http).get = "/v2/console/leaderboard";
   }
 
   // List (and optionally filter) storage data.
-  rpc ListStorage (ListStorageRequest) returns (StorageList) {
+  rpc ListStorage(ListStorageRequest) returns (StorageList) {
     option (google.api.http).get = "/v2/console/storage";
   }
 
   //List storage collections
-  rpc ListStorageCollections (google.protobuf.Empty) returns (StorageCollectionsList) {
+  rpc ListStorageCollections(google.protobuf.Empty) returns (StorageCollectionsList) {
     option (google.api.http).get = "/v2/console/storage/collections";
   }
   // List (and optionally filter) accounts.
-  rpc ListAccounts (ListAccountsRequest) returns (AccountList) {
+  rpc ListAccounts(ListAccountsRequest) returns (AccountList) {
     option (google.api.http).get = "/v2/console/account";
   }
 
   // List ongoing matches
-  rpc ListMatches (nakama.api.ListMatchesRequest) returns (api.MatchList) {
+  rpc ListMatches(nakama.api.ListMatchesRequest) returns (api.MatchList) {
     option (google.api.http).get = "/v2/console/match";
   }
 
   // List validated purchases
-  rpc ListPurchases (ListPurchasesRequest) returns (api.PurchaseList) {
+  rpc ListPurchases(ListPurchasesRequest) returns (api.PurchaseList) {
     option (google.api.http).get = "/v2/console/purchase";
   }
 
   // List (and optionally filter) users.
-  rpc ListUsers (google.protobuf.Empty) returns (UserList) {
+  rpc ListUsers(google.protobuf.Empty) returns (UserList) {
     option (google.api.http).get = "/v2/console/user";
   }
 
   // Unban a user.
-  rpc UnbanAccount (AccountId) returns (google.protobuf.Empty) {
+  rpc UnbanAccount(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unban";
   }
 
   // Unlink the custom ID from a user account.
-  rpc UnlinkCustom (AccountId) returns (google.protobuf.Empty) {
+  rpc UnlinkCustom(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unlink/custom";
   }
 
   // Unlink the device ID from a user account.
-  rpc UnlinkDevice (UnlinkDeviceRequest) returns (google.protobuf.Empty) {
+  rpc UnlinkDevice(UnlinkDeviceRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v2/console/account/{id}/unlink/device",
       body: "*"
@@ -288,42 +293,42 @@ service Console {
   }
 
   // Unlink the email from a user account.
-  rpc UnlinkEmail (AccountId) returns (google.protobuf.Empty) {
+  rpc UnlinkEmail(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unlink/email";
   }
 
   // Unlink the Apple ID from a user account.
-  rpc UnlinkApple (AccountId) returns (google.protobuf.Empty) {
+  rpc UnlinkApple(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unlink/apple";
   }
 
   // Unlink the Facebook ID from a user account.
-  rpc UnlinkFacebook (AccountId) returns (google.protobuf.Empty) {
+  rpc UnlinkFacebook(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unlink/facebook";
   }
 
   // Unlink the Facebook Instant Game ID from a user account.
-  rpc UnlinkFacebookInstantGame (AccountId) returns (google.protobuf.Empty) {
+  rpc UnlinkFacebookInstantGame(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unlink/facebookinstantgame";
   }
 
   // Unlink the Game Center ID from a user account.
-  rpc UnlinkGameCenter (AccountId) returns (google.protobuf.Empty) {
+  rpc UnlinkGameCenter(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unlink/gamecenter";
   }
 
   // Unlink the Google ID from a user account.
-  rpc UnlinkGoogle (AccountId) returns (google.protobuf.Empty) {
+  rpc UnlinkGoogle(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unlink/google";
   }
 
   // Unlink the Steam ID from a user account.
-  rpc UnlinkSteam (AccountId) returns (google.protobuf.Empty) {
+  rpc UnlinkSteam(AccountId) returns (google.protobuf.Empty) {
     option (google.api.http).post = "/v2/console/account/{id}/unlink/steam";
   }
 
   // Update one or more fields on a user account.
-  rpc UpdateAccount (UpdateAccountRequest) returns (google.protobuf.Empty) {
+  rpc UpdateAccount(UpdateAccountRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v2/console/account/{id}",
       body: "*"
@@ -331,7 +336,7 @@ service Console {
   }
 
   // Write a new storage object or replace an existing one.
-  rpc WriteStorageObject (WriteStorageObjectRequest) returns (nakama.api.StorageObjectAck) {
+  rpc WriteStorageObject(WriteStorageObjectRequest) returns (nakama.api.StorageObjectAck) {
     option (google.api.http) = {
       put: "/v2/console/storage/{collection}/{key}/{user_id}",
       body: "*"
@@ -344,14 +349,27 @@ message ApiEndpointDescriptor {
   string method = 1;
   string body_template = 2;
 }
-
+// =========================================================================
 // Account information.
 message Account {
   // The user's account details.
   nakama.api.Account account = 1;
   // The UNIX time when the account was disabled.
   google.protobuf.Timestamp disable_time = 2;
+
+  // 用户附属信息
+  ExtendUserInfo extend_user_info = 3;
+
 }
+
+
+
+
+message ExtendUserInfo {
+  // The oculus ID in the user's account.
+  string oculus_id = 18;
+}
+
 
 // Delete a user account.
 message AccountDeleteRequest {
@@ -801,7 +819,7 @@ message WriteStorageObjectRequest {
   google.protobuf.Int32Value permission_write = 7;
 }
 
-message GetWalletLedgerRequest{
+message GetWalletLedgerRequest {
   // The unique identifier of the user account.
   string account_id = 1;
   // Max number of results per page

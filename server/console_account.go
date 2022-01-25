@@ -192,6 +192,27 @@ func (s *ConsoleServer) GetAccount(ctx context.Context, in *console.AccountId) (
 		DisableTime: account.DisableTime,
 	}, nil
 }
+func (s *ConsoleServer) GetMember(ctx context.Context, in *console.AccountId) (*console.Account, error) {
+	userID, err := uuid.FromString(in.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "Requires a valid user ID.")
+	}
+
+	account, extendInfo, err := GetAccountNew(ctx, s.logger, s.db, s.tracker, userID)
+	if err != nil {
+		// Error already logged in function above.
+		if err == ErrAccountNotFound {
+			return nil, status.Error(codes.NotFound, "Account not found.")
+		}
+		return nil, status.Error(codes.Internal, "An error occurred while trying to retrieve user account.")
+	}
+
+	return &console.Account{
+		Account:        account,
+		DisableTime:    account.DisableTime,
+		ExtendUserInfo: extendInfo,
+	}, nil
+}
 
 func (s *ConsoleServer) GetFriends(ctx context.Context, in *console.AccountId) (*api.FriendList, error) {
 	userID, err := uuid.FromString(in.Id)
